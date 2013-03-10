@@ -41,8 +41,10 @@ cs:
         show_from: "Zobrazovat od"
         tags: Tagy
       user: 
-        first_name: Příjmení
-        last_name: Jméno
+        last_name: Příjmení
+        first_name: Jméno
+        login: "Uživatelské jméno"
+        password: "Heslo"
     errors: 
       full_messages: 
         format: "%{attribute} %{message}"
@@ -376,7 +378,7 @@ cs:
     mobile_use_openid: "…nebo přihlášení s OpenID"
     openid_identity_url_not_found: "Je nám líto, neexistuje uživatel s touto identitou (%{identity_url})"
     option_separator: nebo
-    please_login: "Pro pokračování se prosím přihlšte do Tracks"
+    please_login: "Pro pokračování se prosím přihlašte do Tracks"
     session_time_out: "Sezení vypršelo. Prosím %{link}"
     session_will_expire: "sezen vyprší za %{hours} hodin neaktivity."
     session_will_not_expire: "sezení bylo nastaveno jako trvalé."
@@ -384,7 +386,7 @@ cs:
     successful: "Přihlášení úspěšné. Vítejte zpět!"
     successful_with_session_info: "Přihlášení bylo úspěšné:"
     unsuccessful: "Přihlášení bylo úspěšné."
-    user_no_expiry: Neodhlšovat
+    user_no_expiry: "Neodhlašovat"
   models: 
     preference: 
       due_in: "Plánováno za %{days} dní"
