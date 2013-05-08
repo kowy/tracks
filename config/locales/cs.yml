@@ -324,7 +324,7 @@ cs:
       starred: 4-Hvězdičky
       tickler: Tickler
     navigation: 
-      admin: n/d
+      admin: Administrace
       api_docs: "REST API Dokumenty"
       calendar: Kalendář
       calendar_title: "Kalendář datovaných úkolů"
@@ -335,7 +335,7 @@ cs:
       export_title: "Import a export dat"
       feeds: Feedy
       feeds_title: "Seznam dostupných feedů"
-      help: "?"
+      help: "Nápověda"
       home: Domů
       home_title: Domů
       integrations_: "Integrovat Tracks"
@@ -355,7 +355,7 @@ cs:
       stats: Statistiky
       stats_title: "Zobrazí statistiky úkolů"
       tickler: Tickler
-      tickler_title: Tickler
+      tickler_title: Odložené úkoly
       view: Ukázat
     next_actions_rss_feed: "RSS feed aktuálních úkolů"
     toggle_contexts: "Přepnout sbalené kontexty"
@@ -370,8 +370,8 @@ cs:
     cas_no_user_found: "Nazdar, %{username}! Nemáte účet na Tracks."
     cas_signup_link: "Vyžádat účet"
     cas_username_not_found: "Bohužel neexistuje uživatel v CASu se jménem (%{username})"
-    log_in_again: "přihlašte se znovu."
-    logged_out: "You have been logged out of Tracks."
+    log_in_again: "Přihlašte se prosím znovu."
+    logged_out: "Pro dlouhou nečinnost jste byl odhlášen z Tracks."
     login_cas: "přejít na CAS"
     login_standard: "vraťte se ke standardnímu přihlášení"
     login_with_openid: "přihlašte se se svým OpenID"
