@@ -10,7 +10,7 @@ cs:
         due_style: "Zobrazení datovaných úkolů"
         first_name: Jméno
         last_name: Příjmení
-        locale: Lokále
+        locale: "Jazyk prostředí"
         mobile_todos_per_page: "Úkolů na stránku (mobilní zobrazení)"
         refresh: "Interval obnovení stránky (v minutách)"
         review_period: "Interval revize projektů"
