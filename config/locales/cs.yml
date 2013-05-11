@@ -92,6 +92,7 @@ cs:
     ajaxError: "Chyba čtení ze serveru"
     back: Zpět
     bugs: Chyby
+    collapse_expand: Sbalit/Rozbalit
     cancel: Zrušit
     context: Kontext
     contexts: Kontexty
@@ -371,7 +372,7 @@ cs:
     cas_signup_link: "Vyžádat účet"
     cas_username_not_found: "Bohužel neexistuje uživatel v CASu se jménem (%{username})"
     log_in_again: "Přihlašte se prosím znovu."
-    logged_out: "Pro dlouhou nečinnost jste byl odhlášen z Tracks."
+    logged_out: "Z důvodu dlouhé nečinnost jste byl odhlášen z Tracks."
     login_cas: "přejít na CAS"
     login_standard: "vraťte se ke standardnímu přihlášení"
     login_with_openid: "přihlašte se se svým OpenID"
