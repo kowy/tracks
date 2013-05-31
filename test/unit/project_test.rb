@@ -127,6 +127,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert !p.hidden?
     assert p.nil?
     assert_nil p.id
+    assert_equal "", p.name
   end
   
   def test_name_removes_extra_spaces
@@ -148,6 +149,7 @@ class ProjectTest < ActiveSupport::TestCase
     
     first_todo = @moremoney.todos[0]
     first_todo.show_from = Time.zone.now + 1.week
+    first_todo.save!
     assert_equal :deferred, @moremoney.todos[0].aasm_current_state
     
     assert_equal 1, @moremoney.todos.deferred.count
@@ -165,14 +167,6 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal 4, @moremoney.todos.not_completed.count
     @moremoney.todos[0].complete!
     assert_equal 3, @moremoney.todos.not_completed.count
-  end
-
-  def test_convert_from_todo
-    todo = todos(:upgrade_rails)
-    project = Project.create_from_todo(todo)
-    assert_equal project.name, todo.description
-    assert_equal project.description, todo.notes
-    assert_equal project.default_context, todo.context
   end
 
   def test_new_record_before_save
@@ -227,9 +221,21 @@ class ProjectTest < ActiveSupport::TestCase
 
     p.activate!
     p.todos.each{|t| t.complete!}
-    assert p.todos.active.empty?, "project should not have active todos"
-    assert p.todos.deferred_or_blocked.empty?, "there should not be deferred or blocked todos"
+    assert p.todos.reload.active.empty?, "project should not have active todos"
+    assert p.todos.reload.deferred_or_blocked.empty?, "there should not be deferred or blocked todos"
     assert p.reload.stalled?, "project should be stalled"
   end
+
+  def test_age_in_days
+    p1 = users(:admin_user).projects.create!(:name => "test1")
+    assert_equal 1, p1.age_in_days, "newly created project has age or one day"
+
+    p2 = users(:admin_user).projects.create!(:name => "test7")
+    p2.created_at = 1.week.ago
+    p2.save!
   
+    p2.reload
+    assert_equal 8, p2.age_in_days
+  end
+
 end

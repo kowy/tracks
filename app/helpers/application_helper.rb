@@ -1,6 +1,28 @@
 # The methods added to this helper will be available to all templates in the
 # application.
 module ApplicationHelper
+
+  def group_view_by_menu_entry
+    # not set, no menu entry
+    return "" if @group_view_by.nil?
+
+    # if view == context, the menu shows Order By Project
+    menu_name = @group_view_by == 'context' ? 'project' : 'context'
+
+    content_tag(:li) do
+      link_to( 
+        t("layouts.navigation.group_view_by_#{menu_name}"), 
+        '#', 
+        {:id => "group_view_by_link", :accesskey => "g", :title => t('layouts.navigation.group_view_by_title'), :x_current_group_by => @group_view_by} )
+    end
+  end
+
+  def container_toggle(id)
+    link_to(
+      image_tag("blank.png", :alt => t('common.collapse_expand')),
+      "#", 
+      {:class => "container_toggle", :id => id} )
+  end
   
   def navigation_link(name, options = {}, html_options = nil, *parameters_for_method_reference)
     link_to name, options, html_options
@@ -215,39 +237,30 @@ module ApplicationHelper
       javascript_include_tag("i18n/jquery.ui.datepicker-#{locale}.js")
     end
   end
-  
-  def determine_done_path
-    case controller.controller_name
+
+  def done_path(controller_name, type)
+    case controller_name
     when "contexts"
-      done_todos_context_path(@context)
+      send("#{type}_todos_context_path",@context)
     when "projects"
-      done_todos_project_path(@project)
+      send("#{type}_todos_project_path", @project)
     when "todos"
       if source_view_is(:tag)
-        done_tag_path(@tag_name)
+        send("#{type}_tag_path",@tag_name)
       else
-        done_todos_path
+        send("#{type}_todos_path")
       end
     else
-      done_todos_path
+      send("#{type}_todos_path")
     end
+  end    
+  
+  def determine_done_path
+    done_path(controller.controller_name, :done)
   end
   
   def determine_all_done_path
-    case controller.controller_name
-    when "contexts"
-      all_done_todos_context_path(@context)
-    when "projects"
-      all_done_todos_project_path(@project)
-    when "todos"
-      if source_view_is(:tag)
-        all_done_tag_path(@tag_name)
-      else
-        all_done_todos_path
-      end
-    else
-      all_done_todos_path
-    end
+    done_path(controller.controller_name, :all_done)
   end
   
   def get_list_of_error_messages_for(model)
@@ -260,4 +273,26 @@ module ApplicationHelper
     end
   end
   
+  def link_to_delete(type, object, descriptor = sanitize(object.name))
+    link_to(
+      descriptor,
+      self.send("#{type}_path", object, :format => 'js'),
+      {
+        :id => "delete_#{type}_#{object.id}",
+        :class => "delete_#{type}_button icon",
+        :x_confirm_message => t("#{type}s.delete_#{type}_confirmation", :name => object.name),
+        :title => t("#{type}s.delete_#{type}_title")
+      }
+    )
+  end
+
+  def link_to_edit(type, object, descriptor)
+    link_to(descriptor, self.send("edit_#{type}_path", object),
+      {
+        :id => "link_edit_#{dom_id(object)}",
+        :class => "#{type}_edit_settings icon"
+      })
+  end
+
+
 end

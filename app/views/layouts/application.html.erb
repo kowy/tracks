@@ -10,6 +10,7 @@
       var SOURCE_VIEW = '<%=@source_view%>';
       var AUTH_TOKEN = '<%= raw(protect_against_forgery? ? form_authenticity_token.inspect : "") %>'
       var TAG_NAME = '<%= @tag_name ? @tag_name : "" %>'
+      var GROUP_VIEW_BY = '<%= @group_view_by ? @group_view_by : "" %>'
       var defaultContexts = <%= default_contexts_for_autocomplete.html_safe rescue '{}' %>;
       var defaultTags = <%= default_tags_for_autocomplete.html_safe rescue '{}' %>;
       var dateFormat = '<%= date_format_for_date_picker %>';
@@ -71,6 +72,8 @@
               <li><%= navigation_link( t('layouts.navigation.completed_tasks'), done_overview_path, {:accesskey=>"d", :title=>t('layouts.navigation.completed_tasks_title')} ) %></li>
               <li><%= navigation_link( t('layouts.navigation.feeds'), feeds_path, :title => t('layouts.navigation.feeds_title')) %></li>
               <li><%= navigation_link( t('layouts.navigation.stats'), stats_path, :title => t('layouts.navigation.stats_title')) %></li>
+              <li><hr/></li>
+              <%= group_view_by_menu_entry %>
             </ul>
           </li>
           <li><a href="#"><%= t('layouts.navigation.admin') %></a>

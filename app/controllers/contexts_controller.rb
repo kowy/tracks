@@ -43,13 +43,13 @@ class ContextsController < ApplicationController
       @done = @context.todos.completed.limit(@max_completed).reorder("todos.completed_at DESC, todos.created_at DESC").includes(Todo::DEFAULT_INCLUDES)
       @not_done_todos = @context.todos.active.reorder("todos.due IS NULL, todos.due ASC, todos.created_at ASC").includes(Todo::DEFAULT_INCLUDES)
 
-      @deferred = @context.todos.deferred.includes(Todo::DEFAULT_INCLUDES)
-      @pending = @context.todos.pending.includes(Todo::DEFAULT_INCLUDES)
+      @deferred_todos = @context.todos.deferred.includes(Todo::DEFAULT_INCLUDES)
+      @pending_todos = @context.todos.pending.includes(Todo::DEFAULT_INCLUDES)
         
       @projects = current_user.projects
       @contexts = current_user.contexts
 
-      @count = @not_done_todos.count + @deferred.count + @pending.count
+      @count = @not_done_todos.count + @deferred_todos.count + @pending_todos.count
       @page_title = "TRACKS::Context: #{@context.name}"
       respond_to do |format|
         format.html
@@ -154,24 +154,11 @@ class ContextsController < ApplicationController
   end
 
   def done_todos
-    @source_view = 'context'
-    @context = current_user.contexts.find(params[:id])
-    @page_title = t('contexts.completed_tasks_title', :context_name => @context.name)
-
-    @done_today, @done_this_week, @done_this_month = DoneTodos.done_todos_for_container(@context)
-    @count = @done_today.size + @done_this_week.size + @done_this_month.size
-
-    render :template => 'todos/done'
+    done_todos_for current_user.contexts.find(params[:id])
   end
 
   def all_done_todos
-    @source_view = 'context'
-    @context = current_user.contexts.find(params[:id])
-    @page_title = t('contexts.all_completed_tasks_title', :context_name => @context.name)
-
-    @done = @context.todos.completed.paginate :page => params[:page], :per_page => 20, :order => 'completed_at DESC', :include => Todo::DEFAULT_INCLUDES
-    @count = @done.size
-    render :template => 'todos/all_done'
+    all_done_todos_for current_user.contexts.find(params[:id])
   end
 
   protected
@@ -225,15 +212,7 @@ class ContextsController < ApplicationController
   
   def render_autocomplete
     lambda do
-      # find contexts and the todos count. use a join to prevent all count(todos) of each context to be fetched
-      context_and_todo_count = current_user.contexts
-      .select('contexts.*, count(todos.id) as todos_count')
-      .joins('left outer join todos on context_id=contexts.id')
-      .group('context_id')
-
-      filled_contexts = context_and_todo_count.reject { |ctx| ctx.todos.size == 0 } 
-      empty_contexts = context_and_todo_count.find_all { |ctx| ctx.todos.size == 0 } 
-      render :text => for_autocomplete(filled_contexts + empty_contexts, params[:term])
+      render :text => for_autocomplete(current_user.contexts, params[:term])
     end
   end
 

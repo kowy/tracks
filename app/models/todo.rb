@@ -11,7 +11,7 @@ class Todo < ActiveRecord::Base
 
   # Tag association
   include IsTaggable
-  
+
   # Dependencies associations
   has_many :predecessor_dependencies, :foreign_key => 'predecessor_id', :class_name => 'Dependency', :dependent => :destroy
   has_many :successor_dependencies,   :foreign_key => 'successor_id',   :class_name => 'Dependency', :dependent => :destroy
@@ -21,7 +21,7 @@ class Todo < ActiveRecord::Base
     :source => :predecessor, :conditions => ['NOT (todos.state = ?)', 'completed']
   has_many :pending_successors, :through => :predecessor_dependencies,
     :source => :successor, :conditions => ['todos.state = ?', 'pending']
-    
+
   # scopes for states of this todo
   scope :active, :conditions => { :state => 'active' }
   scope :active_or_hidden, :conditions => ["todos.state = ? OR todos.state = ?", 'active', 'project_hidden']
@@ -51,48 +51,60 @@ class Todo < ActiveRecord::Base
   scope :created_after, lambda { |date| where("todos.created_at > ?", date) }
   scope :created_before, lambda { |date| where("todos.created_at < ?", date) }
 
+  scope :due_today, lambda { where("todos.due <= ?", Time.zone.now) }
+
+  def self.due_after(date)
+    where('todos.due > ?', date)
+  end
+
+  def self.due_between(start_date, end_date)
+    where('todos.due > ? AND todos.due <= ?', start_date, end_date)
+  end
+
   STARRED_TAG_NAME = "starred"
   DEFAULT_INCLUDES = [ :project, :context, :tags, :taggings, :pending_successors, :uncompleted_predecessors, :recurring_todo ]
 
   # state machine
   include AASM
-  aasm_column :state
   aasm_initial_state Proc.new { |t| (t.show_from && t.user && (t.show_from > t.user.date)) ? :deferred : :active}
 
-  aasm_state :active
-  aasm_state :project_hidden
-  aasm_state :completed, :enter => Proc.new { |t| t.completed_at = Time.zone.now }, :exit => Proc.new { |t| t.completed_at = nil}
-  aasm_state :deferred, :exit => Proc.new { |t| t[:show_from] = nil }
-  aasm_state :pending
+  aasm :column => :state do
 
-  aasm_event :defer do
-    transitions :to => :deferred, :from => [:active]
-  end
+    state :active #, :enter => Proc.new{|t| puts "$$$ activating #{t.aasm_current_state} - #{t.show_from} "}
+    state :project_hidden
+    state :completed, :before_enter => Proc.new { |t| t.completed_at = Time.zone.now }, :before_exit => Proc.new { |t| t.completed_at = nil}
+    state :deferred,  :after_exit => Proc.new { |t| t[:show_from] = nil }
+    state :pending
 
-  aasm_event :complete do
-    transitions :to => :completed, :from => [:active, :project_hidden, :deferred, :pending]
-  end
+    event :defer do
+      transitions :to => :deferred, :from => [:active]
+    end
 
-  aasm_event :activate do
-    transitions :to => :active, :from => [:project_hidden, :deferred]
-    transitions :to => :active, :from => [:completed], :guard => :no_uncompleted_predecessors?
-    transitions :to => :active, :from => [:pending], :guard => :no_uncompleted_predecessors_or_deferral?
-    transitions :to => :pending, :from => [:completed], :guard => :uncompleted_predecessors?
-    transitions :to => :deferred, :from => [:pending], :guard => :no_uncompleted_predecessors?
-  end
+    event :complete do
+      transitions :to => :completed, :from => [:active, :project_hidden, :deferred, :pending]
+    end
 
-  aasm_event :hide do
-    transitions :to => :project_hidden, :from => [:active, :deferred, :pending]
-  end
+    event :activate do
+      transitions :to => :active, :from => [:project_hidden, :deferred]
+      transitions :to => :active, :from => [:completed], :guard => :no_uncompleted_predecessors?
+      transitions :to => :active, :from => [:pending], :guard => :no_uncompleted_predecessors_or_deferral?
+      transitions :to => :pending, :from => [:completed], :guard => :uncompleted_predecessors?
+      transitions :to => :deferred, :from => [:pending], :guard => :no_uncompleted_predecessors?
+    end
 
-  aasm_event :unhide do
-    transitions :to => :deferred, :from => [:project_hidden], :guard => Proc.new{|t| !t.show_from.blank? }
-    transitions :to => :pending, :from => [:project_hidden], :guard => :uncompleted_predecessors?
-    transitions :to => :active, :from => [:project_hidden]
-  end
+    event :hide do
+      transitions :to => :project_hidden, :from => [:active, :deferred, :pending]
+    end
 
-  aasm_event :block do
-    transitions :to => :pending, :from => [:active, :deferred]
+    event :unhide do
+      transitions :to => :deferred, :from => [:project_hidden], :guard => Proc.new{|t| !t.show_from.blank? }
+      transitions :to => :pending, :from => [:project_hidden], :guard => :uncompleted_predecessors?
+      transitions :to => :active, :from => [:project_hidden]
+    end
+
+    event :block do
+      transitions :to => :pending, :from => [:active, :deferred]
+    end
   end
 
   attr_protected :user
@@ -114,7 +126,7 @@ class Todo < ActiveRecord::Base
       end
     end
   end
-  
+
   def check_circular_dependencies
     unless @predecessor_array.nil? # Only validate predecessors if they changed
       @predecessor_array.each do |todo|
@@ -122,7 +134,7 @@ class Todo < ActiveRecord::Base
       end
     end
   end
-  
+
   def initialize(*args)
     super(*args)
     @predecessor_array = nil # Used for deferred save of predecessors
@@ -140,6 +152,10 @@ class Todo < ActiveRecord::Base
 
   def uncompleted_predecessors?
     return !uncompleted_predecessors.all.empty?
+  end
+
+  def should_be_blocked?
+    return !( uncompleted_predecessors.empty? || state == 'project_hidden' )
   end
 
   # Returns a string with description <context, project>
@@ -237,16 +253,19 @@ class Todo < ActiveRecord::Base
   end
 
   def show_from=(date)
-    # parse Date objects into the proper timezone
-    date = user.at_midnight(date) if (date.is_a? Date)
+    if deferred? && date.blank?
+      activate
+    else
+      # parse Date objects into the proper timezone
+      date = user.at_midnight(date) if (date.is_a? Date)
 
-    # show_from needs to be set before state_change because of "bug" in aasm.
-    # If show_from is not set, the todo will not validate and thus aasm will not save
-    # (see http://stackoverflow.com/questions/682920/persisting-the-state-column-on-transition-using-rubyist-aasm-acts-as-state-machi)
-    self[:show_from] = date
+      # show_from needs to be set before state_change because of "bug" in aasm.
+      # If show_from is not set, the todo will not validate and thus aasm will not save
+      # (see http://stackoverflow.com/questions/682920/persisting-the-state-column-on-transition-using-rubyist-aasm-acts-as-state-machi)
+      self[:show_from] = date
 
-    activate! if deferred? && date.blank?
-    defer! if active? && !date.blank? && date > user.date
+      defer if active? && !date.blank? && show_from > user.date
+    end
   end
 
   def starred?
@@ -348,6 +367,10 @@ class Todo < ActiveRecord::Base
     end
   end
 
+  def has_project?
+    return ! (project_id.nil? || project.is_a?(NullProject))
+  end
+
   # used by the REST API. <tags> will also work, this is renamed to add_tags in TodosController::TodoCreateParamsHelper::initialize
   def add_tags=(params)
     unless params[:tag].nil?
@@ -405,5 +428,5 @@ class Todo < ActiveRecord::Base
       self.rendered_notes = nil
     end
   end
-  
+
 end

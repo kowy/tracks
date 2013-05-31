@@ -78,8 +78,8 @@ class StatsController < ApplicationController
 
   def actions_done_last30days_data
     # get actions created and completed in the past 30 days.
-    @actions_done_last30days = current_user.todos.completed_after(@cut_off_month).select("completed_at")
-    @actions_created_last30days = current_user.todos.created_after(@cut_off_month).select("created_at")
+    @actions_done_last30days = current_user.todos.completed_after(@cut_off_30days).select("completed_at")
+    @actions_created_last30days = current_user.todos.created_after(@cut_off_30days).select("created_at")
 
     # convert to array. 30+1 to have 30 complete days and one current day [0]
     @actions_done_last30days_array = convert_to_days_from_today_array(@actions_done_last30days, 31, :completed_at)
@@ -178,18 +178,18 @@ class StatsController < ApplicationController
   end
 
   def context_total_actions_data
-    all_actions_per_context = Stats::TopContextsQuery.new(current_user).result
-    prep_context_data_for_view(all_actions_per_context)
+    actions = Stats::TopContextsQuery.new(current_user).result
 
-    render :layout => false
+    @data = Stats::PieChartData.new(actions, t('stats.spread_of_actions_for_all_context'), 70)
+
+    render :pie_chart_data, :layout => false
   end
 
   def context_running_actions_data
-    all_actions_per_context = Stats::TopContextsQuery.new(current_user, :running => true).result
+    actions = Stats::TopContextsQuery.new(current_user, :running => true).result
+    @data = Stats::PieChartData.new(actions, t('stats.spread_of_running_actions_for_visible_contexts'), 60)
 
-    prep_context_data_for_view(all_actions_per_context)
-
-    render :layout => false
+    render :pie_chart_data, :layout => false
   end
 
   def actions_day_of_week_all_data
@@ -341,30 +341,6 @@ class StatsController < ApplicationController
 
   private
 
-  def prep_context_data_for_view(all_actions_per_context)
-
-    @sum = all_actions_per_context.inject(0){|sum, apc| sum += apc['total'].to_i }
-
-    pie_cutoff=10
-    size = [all_actions_per_context.size, pie_cutoff].min
-
-    # explicitely copy contents of hash to avoid ending up with two arrays pointing to same hashes
-    @actions_per_context = Array.new(size){|i| {
-      'name' => all_actions_per_context[i][:name],
-      'total' => all_actions_per_context[i][:total].to_i,
-      'id' => all_actions_per_context[i][:id]
-    } }
-
-    if size==pie_cutoff
-      @actions_per_context[size-1]['name']=t('stats.other_actions_label')
-      @actions_per_context[size-1]['total']=@actions_per_context[size-1]['total']
-      @actions_per_context[size-1]['id']=-1
-      size.upto(all_actions_per_context.size-1){ |i| @actions_per_context[size-1]['total']+=(all_actions_per_context[i]['total'].to_i) }
-    end
-
-    @truncate_chars = 15
-  end
-
   def init
     @me = self # for meta programming
 
@@ -375,6 +351,7 @@ class StatsController < ApplicationController
     @cut_off_year = 12.months.ago.beginning_of_day
     @cut_off_year_plus3 = 15.months.ago.beginning_of_day
     @cut_off_month = 1.month.ago.beginning_of_day
+    @cut_off_30days = 30.days.ago.beginning_of_day
   end
 
   def get_ids_from (actions, week_from, week_to, at_end)

@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   include LoginSystem
-  helper_method :current_user, :prefs, :format_date, :markdown
+  helper_method :current_user, :prefs, :format_date
 
   layout proc{ |controller| controller.mobile? ? "mobile" : "application" }
   # exempt_from_layout /\.js\.erb$/
@@ -33,8 +33,12 @@ class ApplicationController < ActionController::Base
     locale = params[:locale] # specifying a locale in the request takes precedence
     locale = locale || prefs.locale unless current_user.nil? # otherwise, the locale of the currently logged in user takes over
     locale = locale || request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first if request.env['HTTP_ACCEPT_LANGUAGE']
-    I18n.locale = locale.nil? ? I18n.default_locale : (I18n::available_locales.include?(locale.to_sym) ? locale : I18n.default_locale)
-    # logger.debug("Selected '#{I18n.locale}' as locale")
+
+    if locale && I18n::available_locales.map(&:to_s).include?(locale.to_s)
+      I18n.locale = locale
+    else
+      I18n.locale = I18n.default_locale
+    end
   end
 
   def set_session_expiration
@@ -148,38 +152,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def create_todo_from_recurring_todo(rt, date=nil)
-    # create todo and initialize with data from recurring_todo rt
-    todo = current_user.todos.build( { :description => rt.description, :notes => rt.notes, :project_id => rt.project_id, :context_id => rt.context_id})
-    todo.recurring_todo_id = rt.id
-
-    # set dates
-    todo.due = rt.get_due_date(date)
-
-    show_from_date = rt.get_show_from_date(date)
-    if show_from_date.nil?
-      todo.show_from=nil
-    else
-      # make sure that show_from is not in the past
-      todo.show_from = show_from_date < Time.zone.now ? nil : show_from_date
-    end
-
-    saved = todo.save
-    if saved
-      todo.tag_with(rt.tag_list)
-      todo.tags.reload
-    end
-
-    # increate number of occurences created from recurring todo
-    rt.inc_occurences
-
-    # mark recurring todo complete if there are no next actions left
-    checkdate = todo.due.nil? ? todo.show_from : todo.due
-    rt.toggle_completion! unless rt.has_next_todo(checkdate)
-
-    return saved ? todo : nil
-  end
-
   def handle_unverified_request
     unless request.format=="application/xml"
       super # handle xml http auth via our own login code
@@ -286,6 +258,36 @@ class ApplicationController < ActionController::Base
   def set_zindex_counter
     # this counter can be used to handle the IE z-index bug
     @z_index_counter = 500
+  end
+
+  def todo_xml_params
+    if params[:limit_fields] == 'index'
+      return [:only => [:id, :created_at, :updated_at, :completed_at] ]
+    else
+      return [:except => :user_id, :include => [:tags, :predecessors, :successors] ]
+    end
+  end
+
+  def all_done_todos_for(object)
+    object_name = object.class.name.downcase # context or project
+    @source_view = object_name 
+    @page_title = t("#{object_name.pluralize}.all_completed_tasks_title", "#{object_name}_name".to_sym => object.name)
+
+    @done = object.todos.completed.paginate :page => params[:page], :per_page => 20, :order => 'completed_at DESC', :include => Todo::DEFAULT_INCLUDES
+    @count = @done.size
+    render :template => 'todos/all_done'
+  end
+
+  def done_todos_for(object)
+    object_name = object.class.name.downcase # context or project
+    @source_view = object_name
+    eval("@#{object_name} = object")
+    @page_title = t("#{object_name.pluralize}.completed_tasks_title", "#{object_name}_name".to_sym => object.name)
+
+    @done_today, @done_rest_of_week, @done_rest_of_month = DoneTodos.done_todos_for_container(object)
+    @count = @done_today.size + @done_rest_of_week.size + @done_rest_of_month.size
+
+    render :template => 'todos/done'
   end
 
 end

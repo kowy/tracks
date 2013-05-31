@@ -5,8 +5,7 @@ end
 ####### DELETE #######
 
 When /^I delete the action "([^"]*)"$/ do |action_description|
-  todo = @current_user.todos.where(:description => action_description).first
-  todo.should_not be_nil
+  todo = find_todo(action_description)
 
   handle_js_confirm do
     open_submenu_for(todo) do
@@ -138,10 +137,7 @@ Then /^the tag field in the new todo form should be "([^"]*)"$/ do |tag_list|
 end
 
 Then /^the tags of "([^"]*)" should be "([^"]*)"$/ do |todo_description, tag_list|
-  todo = @current_user.todos.where(:description => todo_description).first
-  todo.should_not be_nil
-
-  todo.tag_list.should == tag_list
+  find_todo(todo_description).tag_list.should == tag_list
 end
 
 Then /^I should see "([^"]*)" in the completed section of the mobile site$/ do |desc|
@@ -152,19 +148,14 @@ Then /^I should see "([^"]*)" in the completed section of the mobile site$/ do |
   page.should have_xpath(xpath)
 end
 
-Then /^I should (see|not see) empty message for (completed todos|todos) of home/ do |visible, kind_of_todo|
-  elem = find(kind_of_todo=="todos" ? "div#no_todos_in_view" : "div#empty-d")
-  elem.send(visible=="see" ? "should" : "should_not", be_visible)
-end
-
-Then /^I should (see|not see) the empty tickler message$/ do |see|
-  elem = find("div#tickler-empty-nd")
-  elem.send(see=="see" ? "should" : "should_not", be_visible)
-end
-
 Then /^I should (see|not see) the notes of "([^"]*)"$/ do |visible, todo_description|
   todo = @current_user.todos.where(:description => todo_description).first
   todo.should_not be_nil
   
   page.find("div#notes_todo_#{todo.id}").send(visible=="see" ? "should" : "should_not", be_visible)
+end
+
+Then /^I should (see|not see) the empty tickler message$/ do |see|
+  elem = find("div#no_todos_in_view")
+  elem.send(see=="see" ? "should" : "should_not", be_visible)
 end

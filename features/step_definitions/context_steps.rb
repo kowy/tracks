@@ -71,12 +71,3 @@ Then /^he should see that a context named "([^\"]*)" (is|is not) present$/ do |c
     page.should_not have_selector("div#context_#{context.id} div.context_description a", :visible => true) if context
   end
 end
-
-Then /^I should (see|not see) empty message for (todo|completed todo|deferred todo)s of context/ do |visible, state|
-  css = "error"
-  css = "div#c#{@context.id}empty-nd" if state == "todo"
-  css = "div#empty-d"                 if state == "completed todo"
-  css = "div#tickler-empty-nd"        if state == "deferred todo"
-  
-  page.send(visible=="see" ? :should : :should_not, have_css(css, :visible=>true))
-end

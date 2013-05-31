@@ -2,7 +2,7 @@ Given /this is a pending scenario/ do
   pending
 end
 
-Given /^I set the locale to "([^"]*)"$/ do |locale|
+Given(/^I set the locale to "([^"]*)"$/) do |locale|
   @locale = locale
 end
 
@@ -10,12 +10,21 @@ Given /^I am working on the mobile interface$/ do
   @mobile_interface = true
 end
 
+Given /^the date is "(.*?)"$/ do |date|
+  # remember to tag the scenario with @reset_time to reset this travel
+  Timecop.travel(date)
+end
+
+Given(/^I have selected the view for group by (project|context)$/) do |grouping|
+  @group_view_by = grouping 
+end
+
 Then /the badge should show (.*)/ do |number|
   badge = find("span#badge_count").text.to_i
   badge.should == number.to_i
 end
 
-Then /^I should see an error flash message saying "([^"]*)"$/ do |message|
+Then(/^I should see an error flash message saying "([^"]*)"$/) do |message|
   xpath = "//div[@id='message_holder']/h4[@id='flash']"
   page.should have_xpath(xpath, :visible => true)
   

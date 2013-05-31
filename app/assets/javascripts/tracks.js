@@ -318,6 +318,17 @@ var TracksPages = {
             }
         });
 
+        $("a#group_view_by_link").click(function () {
+            var state = $(this).attr("x_current_group_by")
+            if(state =='context'){
+                state='project';
+            } else {
+                state='context';
+            }
+            $.cookie('group_view_by', state);
+            refresh_page();
+        });
+
         /* fade flashes and alerts in automatically */
         $(".alert").fadeOut(8000);
     }
@@ -354,7 +365,7 @@ var TodoItemsContainer = {
             return false;
         });
         // set to cookied state
-        $('.container.context').each(function(){
+        $('.container.collapsible').each(function(){
             if($.cookie(TodoItemsContainer.buildCookieName(this))=="true"){
                 $(this).find('.toggle_target').hide();
                 $(this).find('.toggle_target').parent().addClass("context_collapsed");
@@ -469,7 +480,8 @@ var TodoItems = {
         $('.drop_target').hide(); // IE8 doesn't call stop() in this situation
 
         ajax_options = default_ajax_options_for_scripts('POST', relative_to_root('todos/add_predecessor'), $(this));
-        ajax_options.data += "&predecessor="+dropped_todo + "&successor="+dragged_todo
+        ajax_options.data["predecessor"]=dropped_todo;
+        ajax_options.data["successor"]=dragged_todo;
         $.ajax(ajax_options);
     },
     drop_todo_on_context: function(evt, ui) {
@@ -481,7 +493,7 @@ var TodoItems = {
         $('.drop_target').hide();
 
         ajax_options = default_ajax_options_for_scripts('POST', relative_to_root('todos/'+dragged_todo + '/change_context'), target);
-        ajax_options.data += "&todo[context_id]="+context_id
+        ajax_options.data["todo[context_id]"]=context_id;
         $.ajax(ajax_options);
     },
     setup_drag_and_drop: function() {
@@ -575,7 +587,7 @@ var TodoItems = {
         $(document).on("click",'.item-container a.delete_dependency_button', function(evt){
             var predecessor_id=$(this).attr("x_predecessors_id");
             var ajax_options = default_ajax_options_for_scripts('DELETE', this.href, $(this).parents('.item-container'));
-            ajax_options.data += "&predecessor="+predecessor_id
+            ajax_options.data << {predecessor: predecessor_id}
             $.ajax(ajax_options);
             return false;
         });
@@ -696,7 +708,7 @@ var ProjectListPage = {
     },
     setup_behavior: function() {
         /* in-place edit of project name */
-        $('div#project_name').editable(ProjectListPage.save_project_name, {
+        $('span#project_name').editable(ProjectListPage.save_project_name, {
             style: 'padding: 0px; width=100%;',
             submit: i18n['common.ok'],
             cancel: i18n['common.cancel'],
@@ -782,6 +794,7 @@ var ProjectListPage = {
 var ContextListPage = {
     update_state_count: function(state, count) {
         $('#'+state+'-contexts-count').html(count);
+        ContextListPage.set_empty_message(state, count==0);
     },
     update_all_states_count: function (active_count, hidden_count, closed_count) {
         $(["active", "hidden", "closed"]).each(function() {
@@ -795,6 +808,10 @@ var ContextListPage = {
         });
     },
     hide_empty_message: function(state, set_visible) {
+        // TODO: wrong method name. refactor to remove this method
+        set_empty_message(state, set_visible);
+    },
+    set_empty_message: function(state, set_visible) {
         if(set_visible) {
             $('div#'+state+'-contexts-empty-nd').slideDown("fast");
         } else {
@@ -1144,11 +1161,12 @@ function generic_get_script_for_list(element, getter, param){
 function default_ajax_options_for_submit(ajax_type, element_to_block) {
     // the complete is not a function but an array so you can push other
     // functions that will be executed after the ajax call completes
+
     var options = {
         type: ajax_type,
         async: true,
         block_element: element_to_block,
-        data: "_source_view=" + SOURCE_VIEW,
+        data: {_source_view: SOURCE_VIEW, _group_view_by: GROUP_VIEW_BY},
         beforeSend: function() {
             if (this.block_element) {
                 $(this.block_element).block({
@@ -1169,8 +1187,9 @@ function default_ajax_options_for_submit(ajax_type, element_to_block) {
             TracksPages.page_notify('error', i18n['common.ajaxError']+': '+status, 8);
         }
     }
-    if(typeof(TAG_NAME) !== 'undefined')
-        options.data += "&_tag_name="+ TAG_NAME;
+    if(typeof(TAG_NAME) !== 'undefined') {
+        options.data["_tag_name"] = TAG_NAME;
+    }
     return options;
 }
 
@@ -1197,7 +1216,7 @@ function post_with_ajax_and_block_element(the_url, element_to_block) {
 
 function put_with_ajax_and_block_element(the_url, element_to_block) {
     var options = default_ajax_options_for_scripts('POST', the_url, element_to_block);
-    options.data += '&_method=put';
+    options.data["_method"] = "put";
     $.ajax(options);
 }
 
@@ -1209,12 +1228,10 @@ $(document).ajaxSend(function(event, request, settings) {
     /* Set up authenticity token properly */
     if ( settings.type == 'POST' || settings.type == 'post' ) {
         if(typeof(AUTH_TOKEN) != 'undefined'){
-            settings.data = (settings.data ? settings.data + "&" : "")
-            + "authenticity_token=" + encodeURIComponent( AUTH_TOKEN ) + "&"
-            + "_source_view=" + encodeURIComponent( SOURCE_VIEW );
+            settings.data["authenticity_token"] = AUTH_TOKEN;
+            settings.data["_source_view"] = SOURCE_VIEW;
         } else {
-            settings.data = (settings.data ? settings.data + "&" : "")
-            + "_source_view=" + encodeURIComponent( SOURCE_VIEW );
+            settings.data["_source_view"] = SOURCE_VIEW;
         }
         request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     }
@@ -1227,7 +1244,7 @@ function setup_periodic_check(url_for_check, interval_in_sec, method) {
         function(){
             var settings = default_ajax_options_for_scripts( method ? method : "GET", url_for_check, null);
             if(typeof(AUTH_TOKEN) != 'undefined'){
-                settings.data += "&authenticity_token=" + encodeURIComponent( AUTH_TOKEN )
+                settings.data << {authenticity_token: AUTH_TOKEN}
             }
             $.ajax(settings);
         },

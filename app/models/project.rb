@@ -11,6 +11,8 @@ class Project < ActiveRecord::Base
   scope :completed, :conditions => { :state => 'completed'}
   scope :uncompleted, :conditions => ["NOT(state = ?)", 'completed']
 
+  scope :with_name_or_description, lambda { |body| where("name LIKE ? OR description LIKE ?", body, body) }
+
   validates_presence_of :name
   validates_length_of :name, :maximum => 255
   validates_uniqueness_of :name, :scope => "user_id"
@@ -18,26 +20,24 @@ class Project < ActiveRecord::Base
   acts_as_list :scope => 'user_id = #{user_id} AND state = \'#{state}\'', :top_of_list => 0
 
   include AASM
-  aasm_column :state
-  aasm_initial_state :active
 
-  # extend NamePartFinder
-  # include Tracks::TodoList
+  aasm :column => :state do
 
-  aasm_state :active
-  aasm_state :hidden, :enter => :hide_todos, :exit => :unhide_todos
-  aasm_state :completed, :enter => :set_completed_at_date, :exit => :clear_completed_at_date
+    state :active, :initial => true
+    state :hidden, :enter => :hide_todos, :exit => :unhide_todos
+    state :completed, :enter => :set_completed_at_date, :exit => :clear_completed_at_date
 
-  aasm_event :activate do
-    transitions :to => :active,   :from => [:active, :hidden, :completed]
-  end
+    event :activate do
+      transitions :to => :active,   :from => [:active, :hidden, :completed]
+    end
 
-  aasm_event :hide do
-    transitions :to => :hidden,   :from => [:active, :completed]
-  end
+    event :hide do
+      transitions :to => :hidden,   :from => [:active, :completed]
+    end
 
-  aasm_event :complete do
-    transitions :to => :completed, :from => [:active, :hidden]
+    event :complete do
+      transitions :to => :completed, :from => [:active, :hidden]
+    end
   end
 
   attr_protected :user
@@ -45,21 +45,6 @@ class Project < ActiveRecord::Base
 
   def self.null_object
     NullProject.new
-  end
-
-  def self.create_from_todo(todo)
-    project = Project.new(:name => todo.description,
-                          :description => todo.notes,
-                          :default_context => todo.context)
-
-    project.user = todo.user
-
-    if project.valid?
-      todo.destroy
-      project.save!
-    end
-
-    project
   end
 
   def hide_todos
@@ -163,6 +148,10 @@ class NullProject
 
   def id
     nil
+  end
+
+  def name
+    ""
   end
 
 end
