@@ -10,7 +10,7 @@ cs:
         due_style: "Zobrazení datovaných úkolů"
         first_name: Jméno
         last_name: Příjmení
-        locale: Lokále
+        locale: "Jazyk prostředí"
         mobile_todos_per_page: "Úkolů na stránku (mobilní zobrazení)"
         refresh: "Interval obnovení stránky (v minutách)"
         review_period: "Interval revize projektů"
@@ -41,8 +41,10 @@ cs:
         show_from: "Zobrazovat od"
         tags: Tagy
       user: 
-        first_name: Příjmení
-        last_name: Jméno
+        last_name: Příjmení
+        first_name: Jméno
+        login: "Uživatelské jméno"
+        password: "Heslo"
     errors: 
       full_messages: 
         format: "%{attribute} %{message}"
@@ -90,6 +92,7 @@ cs:
     ajaxError: "Chyba čtení ze serveru"
     back: Zpět
     bugs: Chyby
+    collapse_expand: Sbalit/Rozbalit
     cancel: Zrušit
     context: Kontext
     contexts: Kontexty
@@ -324,7 +327,7 @@ cs:
       starred: 4-Hvězdičky
       tickler: Tickler
     navigation: 
-      admin: n/d
+      admin: Administrace
       api_docs: "REST API Dokumenty"
       calendar: Kalendář
       calendar_title: "Kalendář datovaných úkolů"
@@ -335,7 +338,7 @@ cs:
       export_title: "Import a export dat"
       feeds: Feedy
       feeds_title: "Seznam dostupných feedů"
-      help: "?"
+      help: "Nápověda"
       home: Domů
       home_title: Domů
       integrations_: "Integrovat Tracks"
@@ -355,7 +358,7 @@ cs:
       stats: Statistiky
       stats_title: "Zobrazí statistiky úkolů"
       tickler: Tickler
-      tickler_title: Tickler
+      tickler_title: Odložené úkoly
       view: Ukázat
     next_actions_rss_feed: "RSS feed aktuálních úkolů"
     toggle_contexts: "Přepnout sbalené kontexty"
@@ -370,15 +373,15 @@ cs:
     cas_no_user_found: "Nazdar, %{username}! Nemáte účet na Tracks."
     cas_signup_link: "Vyžádat účet"
     cas_username_not_found: "Bohužel neexistuje uživatel v CASu se jménem (%{username})"
-    log_in_again: "přihlašte se znovu."
-    logged_out: "You have been logged out of Tracks."
+    log_in_again: "Přihlašte se prosím znovu."
+    logged_out: "Z důvodu dlouhé nečinnost jste byl odhlášen z Tracks."
     login_cas: "přejít na CAS"
     login_standard: "vraťte se ke standardnímu přihlášení"
     login_with_openid: "přihlašte se se svým OpenID"
     mobile_use_openid: "…nebo přihlášení s OpenID"
     openid_identity_url_not_found: "Je nám líto, neexistuje uživatel s touto identitou (%{identity_url})"
     option_separator: nebo
-    please_login: "Pro pokračování se prosím přihlšte do Tracks"
+    please_login: "Pro pokračování se prosím přihlašte do Tracks"
     session_time_out: "Sezení vypršelo. Prosím %{link}"
     session_will_expire: "sezen vyprší za %{hours} hodin neaktivity."
     session_will_not_expire: "sezení bylo nastaveno jako trvalé."
@@ -386,7 +389,7 @@ cs:
     successful: "Přihlášení úspěšné. Vítejte zpět!"
     successful_with_session_info: "Přihlášení bylo úspěšné:"
     unsuccessful: "Přihlášení bylo úspěšné."
-    user_no_expiry: Neodhlšovat
+    user_no_expiry: "Neodhlašovat"
   models: 
     preference: 
       due_in: "Plánováno za %{days} dní"
