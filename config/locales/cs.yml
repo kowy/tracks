@@ -305,6 +305,8 @@ cs:
     select_feed_for_project: "Vyberte feed pro tento projekt"
   footer: 
     send_feedback: "Poslat zpětnou vazbu na %{version}"
+  home:
+    page_title: "TRACKS: Děláme věci pořádně"
   integrations: 
     applescript_next_action_prompt: "Popis úkolu:"
     applescript_success_after_id: vytvořen

@@ -1,7 +1,8 @@
 Tracksapp::Application.routes.draw do
   mount Tolk::Engine => '/tolk', :as => 'tolk' if Rails.env=='development'
 
-  root :to => 'todos#index'
+  root :to => 'home#index'
+  match 'index' => 'home#index'
   
   match 'login' => 'login#login'
   match 'login/expire_session' => 'login#expire_session'
@@ -101,14 +102,15 @@ Tracksapp::Application.routes.draw do
       post 'add_predecessor'
     end
   end
+  match 'todos/index' => 'todos#index'
   match 'todos/tag/:name' => 'todos#tag', :as => :tag
   match 'tags.autocomplete' => "todos#tags", :format => 'autocomplete'
 
   match 'todos/done/tag/:name' => "todos#done_tag", :as => :done_tag
   match 'todos/all_done/tag/:name' => "todos#all_done_tag", :as => :all_done_tag
   match 'auto_complete_for_predecessor' => 'todos#auto_complete_for_predecessor'
-  match 'mobile' => 'todos#index', :format => 'm'
-  match 'm' => 'todos#index', :format => 'm'
+  match 'mobile' => 'home#index', :format => 'm'
+  match 'm' => 'home#index', :format => 'm'
 
   resources :recurring_todos do
     member do

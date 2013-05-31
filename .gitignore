@@ -22,3 +22,5 @@ db/data.yml
 nbproject
 rerun.txt
 tags
+config/site.yml
+config/database.yml
