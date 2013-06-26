@@ -158,7 +158,7 @@ cs:
     completed_tasks_title: TRACKS::Hotové úkoly v kontextu '%{context_name}'
     context_deleted: Kontext byl odstraněn '%{name}'
     context_hide: Schovat z úvodní stránky?
-    context_name: Náev kontextu
+    context_name: Název kontextu
     delete_context: Smazat kontext
     delete_context_confirmation: Opravdu chcete smazat kontext '%{name}'? Dojde ke
       smazání všech (opakovaných) úkolů z daného kontextu!
