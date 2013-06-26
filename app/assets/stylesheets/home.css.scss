@@ -1,0 +1,44 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_tree ../../../vendor/assets/stylesheets
+ *= require tracks
+ *= require_self
+*/
+
+/* Big image in main center part of home page - shareable properties */
+img.main {
+	
+	 
+}
+
+/* Big image in main center part of home page - on left side */
+img.main_left {
+    
+    
+}
+
+/* Big image in main center part of home page - on right side */
+img.main_left {
+    
+    
+}
+
+/************************
+ * Overwritten standard classes 
+ ************************/
+
+/* One message box with header, image and text content */ 
+#display_box {  
+  width: 850px;
+  float: right; 
+  width: 60%;
+  
+}

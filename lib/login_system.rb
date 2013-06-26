@@ -22,7 +22,7 @@ module LoginSystem
     else
       reset_session
       notify :notice, message
-      redirect_to_login
+      redirect_back_or_home
     end
   end
     

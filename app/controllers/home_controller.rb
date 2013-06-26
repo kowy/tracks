@@ -1,7 +1,7 @@
 class HomeController < ApplicationController
   
   # use layout 'login', because 'application' need current_user filled
-  layout 'login'
+  layout 'home'
   skip_before_filter :login_required
   before_filter :login_optional
   before_filter :get_current_user

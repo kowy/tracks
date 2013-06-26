@@ -1,0 +1,25 @@
+<div id="display_box">
+	<div id="best_gtd" class="container" style="display:block">
+		<h2>Nejlepší GTD úkolníček v českém jazyce</h2>
+		<div class="message">
+			<%= image_tag("accept.png", :size=>"460x324", :alt=>"Celkový pohled na úvodní stránku", :align=>"left")%>
+			<a href="http://www.davidco.com/about-gtd" target="_blank">Getting Things Done<sup>EN</sup></a> je metodika vymyšlená Davidem Allanem,
+			která účinně zjednodušuje práci s úkoly a umožní Vám být ještě produktivnější. Nemusíte již žádný úkol držet v hlavě,
+			ve správnou chvíli se Vám zobrazí. Úkolář.cz jejednoduchý a přesto velice účinný správce úkolů, který aplikuje GTD.
+			Vyzkoušejte, <%= link_to("registrace Vás nic nestojí", signup_path) %>
+		</div>
+	</div>
+	<div id="drag_and_drop" class="container" style="display:block">
+		<h2>Organizace snadná, jak přetažení myší</h2>
+		<div class="message">
+			<a href="http://www.davidco.com/about-gtd" target="_blank">Getting Things Done<sup>EN</sup></a> je metodika vymyšlená Davidem Allanem,
+			která účinně zjednodušuje práci s úkoly a umožní Vám být ještě produktivnější. Nemusíte již žádný úkol držet v hlavě,
+			ve správnou chvíli se Vám zobrazí. Úkolář.cz jejednoduchý a přesto velice účinný správce úkolů, který aplikuje GTD.
+			Vyzkoušejte, <%= link_to("registrace Vás nic nestojí", signup_path) %>
+			<%= image_tag("accept.png", :size=>"460x324", :alt=>"Ukázka drag&drop", :align=>"right")%>
+		</div>
+	</div>
+</div>
+<div id="input_box">
+	<%= render :partial => 'login_box' %>
+</div>

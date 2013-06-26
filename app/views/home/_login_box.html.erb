@@ -1,0 +1,26 @@
+<%- reset_tab_index %>
+<div id="context_new_container">
+
+  <div id="context_new" class="context_new" style="display:block">
+    <%= form_tag :controller => 'login', :action => 'login' do %>
+
+      <label for="user_login"><%= User.human_attribute_name('login') %>:</label><br />
+      <input type="text" name="user_login" id="user_login" value="" class="login_text" /><br />
+
+      <label for="user_password"><%= User.human_attribute_name('password') %>:</label><br />
+      <input type="password" name="user_password" id="user_password" class="login_text" /><br />
+      
+      <label for="user_noexpiry"><%= t('login.user_no_expiry') %>:</label><br />
+      <input type="checkbox" name="user_noexpiry" id="user_noexpiry" checked  /><br />
+
+      <div class="submit_box">
+        <div class="widgets">
+          <button type="submit" class="positive" id="context_new_submit">
+            <%= image_tag("accept.png", :alt => "") + t('login.sign_in') %>
+          </button>
+        </div>
+      </div>
+      <br/><br/>
+    <% end %>
+  </div>
+</div>
