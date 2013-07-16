@@ -20,15 +20,15 @@ img.main {
 }
 
 /* Big image in main center part of home page - on left side */
-img.main_left {
-    
-    
+img.msg_left {
+	float: left;
+    vertical-align: middle;
 }
 
 /* Big image in main center part of home page - on right side */
-img.main_left {
-    
-    
+img.msg_right {
+    float: right;
+    vertical-align: middle;
 }
 
 /************************
@@ -37,8 +37,18 @@ img.main_left {
 
 /* One message box with header, image and text content */ 
 #display_box {  
-  width: 850px;
   float: right; 
-  width: 60%;
+  width: 850px;
   
+}
+
+/* One message box content (yellow part) */
+div.message {
+	overflow: auto;
+	padding: 10px;
+}
+
+/* Expand border separator size */
+div.message td:last-child {
+    margin-left: 20px;
 }

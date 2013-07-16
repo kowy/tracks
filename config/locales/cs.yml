@@ -388,9 +388,10 @@ cs:
     session_will_expire: sezen vyprší za %{hours} hodin neaktivity.
     session_will_not_expire: sezení bylo nastaveno jako trvalé.
     sign_in: Přihlásit se
+    sign_up: Zdarma vyzkoušet
     successful: Přihlášení úspěšné. Vítejte zpět!
     successful_with_session_info: 'Přihlášení bylo úspěšné:'
-    unsuccessful: Přihlášení bylo úspěšné.
+    unsuccessful: Přihlášení nebylo úspěšné. Chybné uživatelské jméno nebo heslo.
     user_no_expiry: Neodhlašovat
   models:
     preference:

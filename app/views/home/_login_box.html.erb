@@ -16,7 +16,11 @@
       <div class="submit_box">
         <div class="widgets">
           <button type="submit" class="positive" id="context_new_submit">
-            <%= image_tag("accept.png", :alt => "") + t('login.sign_in') %>
+            <%= image_tag("signin.png", :alt => t('login.sign_in')) + t('login.sign_in') %>
+          </button>
+          <button type="button" class="positive" id="context_sign_up" style="float:right;" 
+                  onclick="location.href='<%= signup_path %>'">
+            <%= image_tag("signup.png", :alt => t('login.sign_up')) + t('login.sign_up') %>
           </button>
         </div>
       </div>

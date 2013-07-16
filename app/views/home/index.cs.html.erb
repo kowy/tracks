@@ -2,21 +2,114 @@
 	<div id="best_gtd" class="container" style="display:block">
 		<h2>Nejlepší GTD úkolníček v českém jazyce</h2>
 		<div class="message">
-			<%= image_tag("accept.png", :size=>"460x324", :alt=>"Celkový pohled na úvodní stránku", :align=>"left")%>
-			<a href="http://www.davidco.com/about-gtd" target="_blank">Getting Things Done<sup>EN</sup></a> je metodika vymyšlená Davidem Allanem,
-			která účinně zjednodušuje práci s úkoly a umožní Vám být ještě produktivnější. Nemusíte již žádný úkol držet v hlavě,
-			ve správnou chvíli se Vám zobrazí. Úkolář.cz jejednoduchý a přesto velice účinný správce úkolů, který aplikuje GTD.
-			Vyzkoušejte, <%= link_to("registrace Vás nic nestojí", signup_path) %>
+			<table>
+				<tbody>
+					<tr>
+						<td><%= image_tag("accept.png", :size=>"460x324", :alt=>"Celkový pohled na úvodní stránku")%></td>
+						<td><a href="http://www.davidco.com/about-gtd" target="_blank">Getting Things Done<sup>EN</sup></a> je metodika vymyšlená Davidem Allanem,
+							která účinně zjednodušuje práci s úkoly a umožní Vám být ještě produktivnější. Nemusíte již žádný úkol držet v hlavě,
+							ve správnou chvíli se Vám zobrazí. Úkolář.cz jejednoduchý a přesto velice účinný správce úkolů, který aplikuje GTD.
+							Vyzkoušejte, <%= link_to("registrace Vás nic nestojí", signup_path) %></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 	<div id="drag_and_drop" class="container" style="display:block">
 		<h2>Organizace snadná, jak přetažení myší</h2>
 		<div class="message">
-			<a href="http://www.davidco.com/about-gtd" target="_blank">Getting Things Done<sup>EN</sup></a> je metodika vymyšlená Davidem Allanem,
-			která účinně zjednodušuje práci s úkoly a umožní Vám být ještě produktivnější. Nemusíte již žádný úkol držet v hlavě,
-			ve správnou chvíli se Vám zobrazí. Úkolář.cz jejednoduchý a přesto velice účinný správce úkolů, který aplikuje GTD.
-			Vyzkoušejte, <%= link_to("registrace Vás nic nestojí", signup_path) %>
-			<%= image_tag("accept.png", :size=>"460x324", :alt=>"Ukázka drag&drop", :align=>"right")%>
+			<table>
+				<tbody>
+					<tr>
+						<td>Úkoly, projekty i kontexty je možné přetahovat myší. Soustřeďte se na svou práci. Minimalistický design aplikace plně využívá 
+							plochu monitoru a ovládačí prvky nabízí tak, aby byly vždy po ruce. Nic Vás nebude rušit.</td>
+						<td><%= image_tag("accept.png", :size=>"460x324", :alt=>"Ukázka drag&drop", :class=>"msg_right")%></td> 
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="free_app" class="container" style="display:block">
+		<h2>Úkolář.cz je tu pro Vás zdarma</h2>
+		<div class="message">
+			<table>
+				<tbody>
+					<tr>
+						<td><%= image_tag("accept.png", :size=>"460x324", :alt=>"Celkový pohled na úvodní stránku", :class=>"msg_left")%></td>
+						<td>Ano, opravdu je vše zdarma. Všechny verze, ze všech pohledů, ve všech velikostech. Bezva zpráva, přesto prosíme,
+							<%= link_to("přispějte nám na vývoj", donate_path) %>, servery i vývojáři potřebují palivo.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="text_completition" class="container" style="display:block">
+		<h2>Inteligentní našeptávače</h2>
+		<div class="message">
+			<table>
+				<tbody>
+					<tr>
+						<td>Inteligentní našeptávače Vám nabídnou položky hned, jak začnete psát. Nepamatujete si přesně název kontextu nebo kategorie?
+							Nevadí, napište pár prvních písmen a už si můžete vybírat ze seznamu.  Zadání úkolu je otázkou okamžiku.</td>
+						<td><%= image_tag("accept.png", :size=>"460x324", :alt=>"Ukázka inteligentního našeptávače", :class=>"msg_right")%></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="android_client" class="container" style="display:block">
+		<h2>Klient pro Android</h2>
+		<div class="message">
+			<table>
+				<tbody>
+					<tr>
+						<td><%= image_tag("accept.png", :size=>"460x324", :alt=>"Celkový pohled na úvodní stránku", :class=>"msg_left")%></td>
+						<td>Máte telefon s Androidem a chcete mít přístup ke svým úkolům? Nainstalujte si Schuffle a připojte se. Je to zdarma.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="mobile_version" class="container" style="display:block">
+		<h2>Mobilní verze pro všechny typy mobilů</h2>
+		<div class="message">
+			<table>
+				<tbody>
+					<tr>
+						<td>Pro majitele mobilních telefonů s Apple iOS a Windows Phone máme k dispozici komfortní mobilní verzi stránek,
+							která sedne každému displayi. Je na stejné adrese. Stačí na mobilu zadat ukolar.cz</td>
+						<td><%= image_tag("accept.png", :size=>"460x324", :alt=>"Ukázka inteligentního našeptávače", :class=>"msg_right")%></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="graphs" class="container" style="display:block">
+		<h2>Přehledné výstupy</h2>
+		<div class="message">
+			<table>
+				<tbody>
+					<tr>
+						<td><%= image_tag("accept.png", :size=>"460x324", :alt=>"Celkový pohled na úvodní stránku", :class=>"msg_left")%></td>
+						<td>Zajímá Vás, jak vám jde práce od ruky? Úkolář.cz Vám graficky vyobrazí jak rychle řešíte úkoly, který den jich vyřešíte
+							nejvíce a naopak, který den jich nejvíce dorazí a mnoho dalšího. Prostě samá nudná statistika.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="api" class="container" style="display:block">
+		<h2>API pro připojení externích systémů</h2>
+		<div class="message">
+			<table>
+				<tbody>
+					<tr>
+						<td><abbr title="Application Programming Interface">API</abbr> a řada různých exportů umožňuje zálohování na lokální počítač,
+							propojení s kaledářem, úkolníčkem, nebo přímo Vaší aplikací.</td>
+						<td><%= image_tag("accept.png", :size=>"460x324", :alt=>"Celkový pohled na úvodní stránku", :class=>"msg_right")%></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>
