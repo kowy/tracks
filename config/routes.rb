@@ -3,6 +3,7 @@ Tracksapp::Application.routes.draw do
 
   root :to => 'home#index'
   match 'index' => 'home#index'
+  match 'donate' => "home#donate"
 
   match 'login' => 'login#login'
   match 'login/expire_session' => 'login#expire_session'

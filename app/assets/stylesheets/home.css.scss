@@ -52,3 +52,8 @@ div.message {
 div.message td:last-child {
     margin-left: 20px;
 }
+
+/* remove white border around form in left box */
+#context_new_container form {
+	border: none;
+}
