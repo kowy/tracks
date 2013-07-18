@@ -386,7 +386,7 @@ cs:
     sign_in: "Přihlásit se"
     successful: "Přihlášení úspěšné. Vítejte zpět!"
     successful_with_session_info: "Přihlášení bylo úspěšné:"
-    unsuccessful: "Přihlášení bylo úspěšné."
+    unsuccessful: Přihlášení nebylo úspěšné. Chybné uživatelské jméno nebo heslo.
     user_no_expiry: "Neodhlašovat"
   models: 
     preference: 
